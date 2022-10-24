@@ -1,0 +1,12 @@
+<form method="POST" class="bg-gray-100 rounded-lg p-8 flex flex-col md:mr-auto md:ml-auto w-full mt-10 md:mt-0">
+    {% csrf_token %}
+    <h2 class="text-gray-900 text-lg font-medium title-font mb-5">{{ title }}</h2>
+
+    <div class="relative mb-4">
+        <label for="name" class="leading-7 text-sm text-gray-600">{{ form.name.label }}</label>
+        {{ form.name }}
+        {{ form.name.errors }}
+    </div>
+
+    <button class="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">Submit</button>
+</form>

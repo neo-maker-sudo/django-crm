@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    agents create
+{% endblock title %}
+
+{% block content %}
+    <section class="text-gray-600 body-font">
+
+        <div class="md:w-1/2 pl-5 md:mr-auto md:ml-auto mt-10">
+            <a href="{% url 'agents:list' %}" class="text-xs text-indigo-500 tracking-widest font-medium title-font mb-1">Go back to agents list</a>
+        </div>
+        <div class="container lg:w-1/2 px-5 pt-5 pb-24 mx-auto items-center">
+            {% include 'agents/_form.html' with title="Create New agent" %}
+        </div>
+    </section>
+{% endblock content %}

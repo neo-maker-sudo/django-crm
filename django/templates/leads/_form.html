@@ -1,0 +1,64 @@
+<form method="POST" class="bg-gray-100 rounded-lg p-8 flex flex-col md:mr-auto md:ml-auto w-full mt-10 md:mt-0" enctype="multipart/form-data">
+    {% csrf_token %}
+    <h2 class="text-gray-900 text-lg font-medium title-font mb-5">{{ title }}</h2>
+    <div class="relative mb-4">
+        <label for="first_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{ form.first_name.label }}</label>
+        {{ form.first_name }}
+        {{ form.first_name.errors }}
+    </div>
+    <div class="relative mb-4">
+        <label for="last_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{ form.last_name.label }}</label>
+        {{ form.last_name }}
+        {{ form.last_name.errors }}
+    </div>
+
+    <div class="relative mb-4">
+        <label for="age" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{ form.age.label }}</label>
+        {{ form.age }}
+        {{ form.age.errors }}
+    </div>
+
+    <div class="relative mb-4">
+        <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{ form.email.label }}</label>
+        {{ form.email }}
+        {{ form.email.errors }}
+    </div>
+
+    <div class="relative mb-4">
+        <label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{ form.description.label }}</label>
+        {{ form.description }}
+        {{ form.description.errors }}
+    </div>
+
+    <div class="relative mb-4">
+        <label for="phone_number" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{ form.phone_number.label }}</label>
+        {{ form.phone_number }}
+        {{ form.phone_number.errors }}
+    </div>
+
+    <div class="relative mb-4">
+        <label for="avatar" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{ form.avatar.label }}</label>
+        {{ form.avatar }}
+        {{ form.avatar.errors }}
+    </div>
+
+    <div class="relative mb-4">
+        <label for="agent" class="leading-7 text-sm text-gray-600">{{ form.agent.label }}</label>
+        {{ form.agent }}
+        {{ form.agent.errors }}
+    </div>
+
+    <div class="relative mb-4">
+        <label for="category" class="leading-7 text-sm text-gray-600">{{ form.category.label }}</label>
+        {{ form.category }}
+        {{ form.category.errors }}
+    </div>
+
+    <div class="relative mb-4">
+        <label for="organization" class="leading-7 text-sm text-gray-600">{{ form.organization.label }}</label>
+        {{ form.organization }}
+        {{ form.organization.errors }}
+    </div>
+
+    <button class="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">Submit</button>
+</form>
