@@ -34,6 +34,7 @@ urlpatterns = [
         next_page=reverse_lazy("login"),
     ), name="logout"),
 
+    path("password/change", base_views.PasswordChangeView.as_view(), name="password_change"),
     path('password/reset', base_views.CustomPasswordResetView.as_view(),name='password_reset'),
     path('password/reset/done', PasswordResetDoneView.as_view(), name='password_reset_done'),
     path("password/reset/confirm/<uidb64>/<token>/", base_views.CustomPasswordConfirmView.as_view(), name="password_reset_confirm"),

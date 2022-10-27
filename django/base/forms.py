@@ -1,9 +1,11 @@
+from django import forms
 from django.contrib.auth.forms import (
     UserCreationForm, UsernameField, PasswordResetForm, SetPasswordForm,
     AuthenticationForm
 )
 from django.core.exceptions import ValidationError
 from django.contrib.auth import authenticate
+from django.utils.translation import gettext_lazy as _
 from base.models import User
 
 
@@ -77,6 +79,64 @@ class SignUpForm(UserCreationForm):
             }
         )
 
+
+class CustomPasswordChangeForm(SetPasswordForm):
+
+    error_messages = {
+        'password_mismatch': _('The two password fields didn’t match.'),
+        "old_password_incorrect": _("old password incorrect, please enter again."),
+        "password_match_error": _("old password could not be same as new password, please enter again."),
+    }
+
+    old_password = forms.CharField(
+        label=_("Old password"),
+        widget=forms.PasswordInput(attrs={'autocomplete': 'old-password'}),
+        strip=False,
+    )
+
+    field_order = ['old_password', 'new_password1', 'new_password2',]
+
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super().__init__(user, *args, **kwargs)
+
+        self.fields['old_password'].widget.attrs.update(
+            {
+                'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500', 
+            }
+        )
+
+        self.fields['new_password1'].widget.attrs.update(
+            {
+                'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500', 
+            }
+        )
+        self.fields['new_password2'].widget.attrs.update(
+            {
+                'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500',             }
+        )
+
+    def clean(self):
+        cleaned_data = super().clean()
+          
+        old_password = cleaned_data.get("old_password")
+        new_password1 = cleaned_data.get("new_password1")
+        
+        if not self.user.check_password(old_password):
+            error = ValidationError(
+                self.error_messages["old_password_incorrect"],
+                code="old_password_incorrect"
+            )
+            self.add_error("old_password", error)
+        
+        if old_password == new_password1:
+            error = ValidationError(
+                self.error_messages["password_match_error"],
+                code="password_match_error"
+            )
+            self.add_error("new_password1", error)
+        
+        return cleaned_data
 
 class CustomPasswordResetForm(PasswordResetForm):
     def __init__(self, *args, **kwargs):
