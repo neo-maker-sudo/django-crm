@@ -9,7 +9,7 @@ from .forms import CategoryForm
 
 
 class CategoryListView(LoginRequiredMixin, ListView):
-    template_name: str = "category/categories_list.html"
+    template_name: str = "crm/category/categories_list.html"
     context_object_name = "categories"
     
     def get_context_data(self, **kwargs):
@@ -40,7 +40,7 @@ class CategoryListView(LoginRequiredMixin, ListView):
 
 
 class CategoryCreateView(LoginRequiredMixin, CreateView):
-    template_name: str = "category/categories_create.html"
+    template_name: str = "crm/category/categories_create.html"
     login_url = reverse_lazy("login")
     form_class = CategoryForm
     success_url: Optional[str] = reverse_lazy("categories_list") 
@@ -59,7 +59,7 @@ class CategoryCreateView(LoginRequiredMixin, CreateView):
 
 
 class CategoryDetailView(LoginRequiredMixin, DetailView):
-    template_name: str = "category/categories_detail.html"
+    template_name: str = "crm/category/categories_detail.html"
     context_object_name = "category"
     
     def get_context_data(self, **kwargs):
@@ -88,7 +88,7 @@ class CategoryDetailView(LoginRequiredMixin, DetailView):
 
 class CategoryUpdateView(LoginRequiredMixin, UpdateView):
     login_url = reverse_lazy("login")
-    template_name: str = "category/categories_update.html"
+    template_name: str = "crm/category/categories_update.html"
     form_class = CategoryForm
     success_url: Optional[str] = reverse_lazy("categories_list")
 

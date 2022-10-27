@@ -15,7 +15,7 @@ from base.mixins import CustomLoginRequiredMixin
 
 class LeadsListView(LoginRequiredMixin, ListView):
     login_url = reverse_lazy("login")
-    template_name: str = "leads/leads_list.html"
+    template_name: str = "crm/leads/leads_list.html"
     context_object_name: Optional[str] = "leads"
 
     def get_queryset(self):
@@ -31,7 +31,7 @@ class LeadsListView(LoginRequiredMixin, ListView):
 
 class LeadsDetailView(CustomLoginRequiredMixin, DetailView):
     login_url = reverse_lazy("login")
-    template_name: str = "leads/leads_detail.html"
+    template_name: str = "crm/leads/leads_detail.html"
     context_object_name: Optional[str] = "lead"
 
     def get_queryset(self):
@@ -47,7 +47,7 @@ class LeadsDetailView(CustomLoginRequiredMixin, DetailView):
 
 class LeadsCreateView(CustomLoginRequiredMixin, CreateView):
     login_url = reverse_lazy("login")
-    template_name: str = "leads/leads_create.html"
+    template_name: str = "crm/leads/leads_create.html"
     form_class = LeadForm
     success_url: Optional[str] = reverse_lazy("leads_list") 
 
@@ -67,7 +67,7 @@ class LeadsCreateView(CustomLoginRequiredMixin, CreateView):
 
 class LeadsUpdateView(CustomLoginRequiredMixin, UpdateView):
     login_url = reverse_lazy("login")
-    template_name: str = "leads/leads_update.html"
+    template_name: str = "crm/leads/leads_update.html"
     form_class = LeadForm
     success_url: Optional[str] = reverse_lazy("leads_list")
 
@@ -90,7 +90,7 @@ class LeadsDeleteView(CustomLoginRequiredMixin, DeleteView):
 class AgentAssignView(CustomLoginRequiredMixin, FormView):
     login_url = reverse_lazy("login")
     success_url: Optional[str] = reverse_lazy("leads_list")
-    template_name: str = "leads/assign_agent.html"
+    template_name: str = "crm/leads/assign_agent.html"
     form_class = AssignAgentForm
 
     def get_form_kwargs(self, *args, **kwargs):

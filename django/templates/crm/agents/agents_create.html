@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'crm/base.html' %}
 
 {% block title %}
     agents create
@@ -11,7 +11,7 @@
             <a href="{% url 'agents:list' %}" class="text-xs text-indigo-500 tracking-widest font-medium title-font mb-1">Go back to agents list</a>
         </div>
         <div class="container lg:w-1/2 px-5 pt-5 pb-24 mx-auto items-center">
-            {% include 'agents/_form.html' with title="Create New agent" %}
+            {% include 'crm/agents/_form.html' with title="Create New agent" %}
         </div>
     </section>
 {% endblock content %}

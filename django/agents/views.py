@@ -15,7 +15,7 @@ from base.mixins import CustomLoginRequiredMixin
 
 class AgentsListView(CustomLoginRequiredMixin, ListView):
     login_url = reverse_lazy("login")
-    template_name: str = "agents/agents_list.html"
+    template_name: str = "crm/agents/agents_list.html"
     context_object_name: Optional[str] = "agents"
     
     def get_queryset(self):
@@ -26,7 +26,7 @@ class AgentsListView(CustomLoginRequiredMixin, ListView):
     
 class AgentsCreateView(CustomLoginRequiredMixin, CreateView):
     login_url = reverse_lazy("login")
-    template_name: str = "agents/agents_create.html"
+    template_name: str = "crm/agents/agents_create.html"
     form_class = AgentForm
     success_url: Optional[str] = reverse_lazy("agents:list")
     
@@ -50,7 +50,7 @@ class AgentsCreateView(CustomLoginRequiredMixin, CreateView):
 
 class AgentsDetailView(CustomLoginRequiredMixin, DetailView):
     login_url = reverse_lazy("login")
-    template_name: str = "agents/agents_detail.html"
+    template_name: str = "crm/agents/agents_detail.html"
     context_object_name: Optional[str] = "agent"
 
     def get_queryset(self):
@@ -60,7 +60,7 @@ class AgentsDetailView(CustomLoginRequiredMixin, DetailView):
 
 class AgentsUpdateView(LoginRequiredMixin, UpdateView):
     login_url = reverse_lazy("login")
-    template_name: str = "agents/agents_update.html"
+    template_name: str = "crm/agents/agents_update.html"
     form_class = AgentForm
     success_url: Optional[str] = reverse_lazy("agents:list")
 
