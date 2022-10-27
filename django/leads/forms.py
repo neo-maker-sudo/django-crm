@@ -84,7 +84,7 @@ class LeadForm(forms.ModelForm):
         ),
         validators=[
             FileExtensionValidator(
-                allowed_extensions=["png", "jpg", "webo"],
+                allowed_extensions=["png", "jpg", "webp"],
                 message="not allow %(extension)s, only accept %(allowed_extrnsions)s format"
             )
         ]

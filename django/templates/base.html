@@ -14,8 +14,11 @@
 <body>
     <div class="max-w-7xl mx-auto">
         {% block navbar %}{% endblock navbar %}
-        {% block content %}{% endblock content %}
+        {% block registration %}{% endblock registration %}
+        {% block crm %}{% endblock crm %}
+        {% block punching %}{% endblock punching %}
     </div>
     <script src="https://unpkg.com/flowbite@1.5.3/dist/flowbite.js"></script>
+    {% block script %}{% endblock script %}
 </body>
 </html>
