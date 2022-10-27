@@ -1,0 +1,9 @@
+{% extends 'navbar.html' %}
+
+{% block crm_navbar %}
+    <a href="{% url 'leads_list' %}" class="mr-5 hover:text-gray-900">Leads</a>
+
+    {% if not request.user.is_agent %}
+    <a href="{% url 'agents:list' %}" class="mr-5 hover:text-gray-900">Agents</a>
+    {% endif %}
+{% endblock crm_navbar %}
