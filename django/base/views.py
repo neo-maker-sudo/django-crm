@@ -16,7 +16,7 @@ class CustomLoginView(LoginView):
     def get(self, request, *args, **kwargs):
         
         if request.user.is_authenticated:
-            return redirect("leads_list")
+            return redirect("punching_landing")
 
         return super().get(request, *args, **kwargs)
     
