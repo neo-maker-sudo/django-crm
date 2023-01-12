@@ -1,0 +1,110 @@
+{% extends 'meeting/base.html' %}
+{% load static %}
+
+{% block style %}
+  .none {
+    -webkit-filter: none;
+    filter: none;
+  }
+
+  .blur {
+    -webkit-filter: blur(2px);
+    filter: blur(2px);
+  }
+
+  .grayscale {
+    -webkit-filter: grayscale(1);
+    filter: grayscale(1);
+  }
+
+  .invert {
+    -webkit-filter: invert(1);
+    filter: invert(1);
+  }
+
+  .sepia {
+    -webkit-filter: sepia(1);
+    filter: sepia(1);
+  }
+{% endblock style %}
+
+{% block content %}
+
+  {% include 'meeting/sidebar.html' %}
+
+  <div id="roomArea">
+    <aside id="chatArea">
+      <div id="chatTextarea" class="p-2.5 text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></div>
+
+      <div class="mt-2 flex relative">
+        <input type="text" id="messageInput" class="block w-full p-4 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+        <button type="submit" id="messageSubmit" class="text-white absolute right-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Send</button>
+      </div>
+      {{ room_name|json_script:"room-name" }}
+
+    </aside>
+    <div id="videoArea">
+      <video class="localVideo localVideoWidth" autoplay playsinline></video>
+      <div id="remoteVideoArea">
+
+        {% comment %} <div style="background-color: red; width:100%; height: 100%;"></div> {% endcomment %}
+      </div>
+    </div>
+  </div>
+  <div>
+    <div class="controls">
+      <div id="cameraBtn">
+        <img id="roomCameraIcon" src="{% static 'icons/camera.png' %}" />
+      </div>
+
+      <div id="micBtn">
+        <img id="roomMicIcon" src="{% static 'icons/mic.png' %}" />
+      </div>
+
+      <div id="chatBtn">
+        <img id="roomChatIcon" src="{% static 'icons/chat.png' %}">
+      </div>
+
+    </div>
+
+  </div>
+{% endblock content %}
+
+{% block entrance %}
+  <script type="text/javascript" src="{% static '/js/meeting/entrance.js' %}"></script>
+{% endblock entrance %}
+
+{% block websocket %}
+  <script type="text/javascript" src="{% static '/js/meeting/websocket.js' %}"></script>
+{% endblock websocket %}
+
+{% block webrtc %}
+    <script type="text/javascript" src="{% static '/js/meeting/webrtc.js' %}"></script>
+{% endblock webrtc %}
+{% comment %} 
+<div class="flex h-96 bg-black text-white rounded-lg">
+  <div class="w-6/12 text-center">分享畫面
+    <div>
+      <video class="max-w-full h-auto rounded-lg" autoplay id="shareVideo"></video>
+    </div>
+  </div>
+
+  <div class="w-6/12 text-center">回放錄製影片
+    <div>
+      <video class="max-w-full h-auto rounded-lg" autoplay id="replayVideo"></video>
+    </div>
+  </div>
+
+</div>
+
+
+<button type="button" id="captureAudio" class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">開啟麥克風</button>
+<button type="button" id="stopAudio" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">關閉麥克風</button>
+
+<button type="button" id="captureScreenShot" class="py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">截圖</button>
+<button type="button" id="videoRecord" data-record="false" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-full text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">錄影</button>
+<button type="button" id="videoReplay" class="py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700" disabled>回放</button>
+<button type="button" id="videoDownload" class="py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700" disabled>下載</button>
+
+<button type="button" id="shareScreen" class="py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">分享畫面</button>
+{% endcomment %}

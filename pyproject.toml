@@ -13,6 +13,9 @@ django-compressor = "^4.1"
 django-sass-processor = "^1.2.1"
 Pillow = "^9.2.0"
 stripe = "^4.2.0"
+channels = "^4.0.0"
+daphne = "^4.0.0"
+channels-redis = "^4.0.0"
 
 [tool.poetry.dev-dependencies]
 
