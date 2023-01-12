@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block navbar %}
+    {% include 'navbar.html' %}
+{% endblock navbar %}
+
+{% block meeting %}
+    {% block content %}{% endblock content %}
+{% endblock meeting %}
+
+{% block main_script_section %}
+    {% block entrance %}{% endblock entrance %}
+    {% block websocket %}{% endblock websocket %}
+    {% block webrtc %}{% endblock webrtc %}
+{% endblock main_script_section %}

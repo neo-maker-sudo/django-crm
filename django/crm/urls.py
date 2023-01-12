@@ -29,6 +29,9 @@ urlpatterns = [
     path("leads/", include("leads.urls")),
     path("agents/", include("agents.urls", namespace="agents")),
     path("categories/", include("category.urls")),
+    path("payment/", include("payment.urls")),
+    path("punching/", include("punching.urls")),
+    path("meeting/", include("meeting.urls")),
     path("login", base_views.CustomLoginView.as_view(), name="login"),
     path("logout", LogoutView.as_view(
         next_page=reverse_lazy("login"),

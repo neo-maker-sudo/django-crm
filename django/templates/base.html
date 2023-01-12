@@ -10,15 +10,19 @@
     <title>{% block title %}{% endblock title %}</title>
     <link href="{% sass_src 'css/styles.scss' %}" rel="stylesheet" type="text/css">
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>{% block style %}{% endblock style %}</style>
 </head>
 <body>
-    <div class="max-w-7xl mx-auto">
+    <div class="mx-auto" id="base">
         {% block navbar %}{% endblock navbar %}
         {% block registration %}{% endblock registration %}
         {% block crm %}{% endblock crm %}
         {% block punching %}{% endblock punching %}
+        {% block meeting %}{% endblock meeting %}
+
+        {% comment %} {% include 'footer.html' %} {% endcomment %}
     </div>
     <script src="https://unpkg.com/flowbite@1.5.3/dist/flowbite.js"></script>
-    {% block script %}{% endblock script %}
+    {% block main_script_section %}{% endblock main_script_section %}
 </body>
 </html>
