@@ -3,7 +3,6 @@ let roomName = document.getElementById('room-name');
 const chatTextarea = document.getElementById("chatTextarea");
 const messageInput = document.getElementById("messageInput");
 const messageSubmitBtn = document.getElementById("messageSubmit");
-const dropdownMenuBtn = document.getElementById("dropdownMenu");
 
 roomName = JSON.parse(roomName.textContent);
 
@@ -54,11 +53,22 @@ socket.onmessage = (e) => {
 
     if ( data.type == "join") {
         addBotMessageToDom(`Welcome ${data.username} joined room`);
-
+        WebRTC.setLocalVideoId(data.session_id);
+        
         if ( data.totals > 1 ) {
+            window.totalHumans = data.totals
             // session_id 是自己，sessions 是房間的全部人
             WebRTC.createP2PConnection(data.session_id, data.sessions);
         }
+
+    } else if ( data.type == "share_screen" ) {
+        addBotMessageToDom(`${data.username} share screen`);
+
+        // WIP: not sure how to do, comment out first
+        // if ( data.totals > 1 ) {
+        //     // session_id 是自己，sessions 是房間的全部人
+        //     WebRTC.createP2PShareVideoConnection(data.session_id, data.sessions);
+        // }
 
     } else if ( data.type == "chatting" ) {
         addMessageToDom(data.username, data.message);

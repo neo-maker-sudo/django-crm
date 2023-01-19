@@ -1,6 +1,3 @@
-const videoArea = document.querySelector("#videoArea");
-const remoteVideoArea = document.querySelector("#remoteVideoArea");
-
 const stunServerConfiguration = {
     "iceServers": [{
             "urls": "stun:stun.l.google.com:19302"
@@ -65,14 +62,17 @@ function sendIceCandidate(event, session_id) {
 }
 
 class WebRTC {
-    static createP2PConnection(session_id, sessions) {
+    static setLocalVideoId(session_id) {
+        localVideo.setAttribute("id", session_id);
+    }
+
+    static async createP2PConnection(session_id, sessions) {
         // session_id 是自己，sessions 是房間的全部人 ids
 
         console.log("開始建立 P2P Connection...");
 
         for ( const [key, id] of Object.entries(sessions) ) {
             if ( id == session_id ) {
-                localVideo.setAttribute("id", session_id)
                 continue
             }
             
@@ -82,23 +82,41 @@ class WebRTC {
                 peers[id] = new RTCPeerConnection(stunServerConfiguration);
 
                 // 把新進的人建立的 peer 加入舊的自己的媒體流
-                peers[id].addStream(window.stream);
+                // if ( window.stream != undefined ) {
 
-                // window.stream.getTracks().forEach( track => peers[id].addTrack(track, window.stream))
+                //     peers[id].addStream(window.stream);
+                // }
+
+                // peers[id].onaddtrack = (event) => {
+                //     console.log("onaddtrack", event)
+                // }
+                
+                // 這邊如果不執行，對方就無法觸發 ontrack
+                await window.stream.getTracks().forEach( track => peers[id].addTrack(track, window.stream))
     
                 peers[id].ontrack = ( event ) => {
                     if ( !document.getElementById(id) ) {
+                        const div = document.createElement("div");
                         const remoteVideo = document.createElement("video");
 
                         if (remoteVideo.srcObject !== event.streams[0]) {
                     
-                          remoteVideo.srcObject = event.streams[0];
-                          remoteVideo.setAttribute('playsinline', true);
-                          remoteVideo.setAttribute("class", "max-w-full h-auto rounded-lg");
-                          remoteVideo.autoplay = true;
-                          remoteVideo.id = id
-                    
-                          remoteVideoArea.append(remoteVideo);
+                            remoteVideo.srcObject = event.streams[0];
+                            remoteVideo.setAttribute('playsinline', true);
+                            remoteVideo.setAttribute("class", "max-w-full h-auto rounded-lg");
+                            remoteVideo.autoplay = true;
+
+                            let newMicButton = `
+                                <div class="removeMicBtn">
+                                    <img class="roomMicIcon" src="/static/icons/mic.png" />
+                                </div>`
+
+                            div.insertAdjacentHTML('beforeend', newMicButton)
+                            div.append(remoteVideo);
+                            
+                            div.id = id;
+                            div.classList.add("videoBlock");
+                            remoteVideoArea.append(div);
                         }
                     }
                 }
@@ -125,8 +143,12 @@ class WebRTC {
 
     }
 
-    static handleComingIceCandidate(event, session_id) {
-        peers[session_id].addIceCandidate(event);
+    static async createP2PShareVideoConnection() {
+        console.log("share connection start...")
+    }
+
+    static async handleComingIceCandidate(event, session_id) {
+        await peers[session_id].addIceCandidate(event);
     }
 
     static async handleSDPOffer(desc, session_id) {
@@ -153,16 +175,9 @@ class WebRTC {
     static handleDeleteRemoteVideo(session_id) {
 
         try {
-            const remoteVideo = document.getElementById(session_id);
-
-            if ( remoteVideoArea.hasChildNodes() ) {
-                for ( let child of remoteVideoArea.children) {
-                    if ( child == remoteVideo ) {
-                        remoteVideoArea.removeChild(remoteVideo);
-                    }
-                }
-    
-            }            
+            const remoteVideoBlock = document.getElementById(session_id);
+            remoteVideoArea.removeChild(remoteVideoBlock);
+        
         } catch ( error ) {
             console.error(error)
         }
@@ -170,12 +185,13 @@ class WebRTC {
     }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     // navigator.mediaDevices.enumerateDevices().then(retrieveDevices)
     // videoSelect.onchange = captureLocalVideoStream()
     // 只要切換音訊輸入裝置觸發重新抓取 local stream 的動作
     if ( window.stream === undefined ) {
         console.log("capture local video stream...")
+
         socket.onopen = async (e) => {
             await captureLocalVideoStream()
 
@@ -184,6 +200,19 @@ document.addEventListener("DOMContentLoaded", () => {
             }))
 
         }
+        const status = await navigator.permissions.query({name: "camera"});
+        status.addEventListener("change", async (event) => {
+            await captureLocalVideoStream();
+
+            if ( event.currentTarget.state == "denied") {
+                micBtn.style.backgroundColor = forbidColor;
+                cameraBtn.style.backgroundColor = forbidColor;
+            } else {
+                micBtn.style.backgroundColor = allowColor;
+                cameraBtn.style.backgroundColor = allowColor;
+            }
+
+        });
 
     }
 

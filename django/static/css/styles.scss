@@ -9,7 +9,7 @@
 }
 
 
-#cameraBtn, #micBtn, #chatBtn {
+#cameraBtn, #micBtn, #chatBtn, #settingBtn, #shareScreenBtn {
     border-radius: 50%;
     padding: 10px;
     background-color: #363739;
@@ -17,7 +17,9 @@
 }
 
 #remoteVideoArea{
-    video {
+    position: relative;
+
+    .videoBlock {
         position: fixed;
         top: 20px;
         left: 20px;
@@ -29,11 +31,25 @@
         box-shadow: 3px 3px 15px -1px rgba(0,0,0,0.77);
         z-index: 999;
     }
+
+    .removeMicBtn {
+        position: absolute;
+        right: 3%;
+        top: 5%;
+        z-index: 1000;
+    }
 }
 
-#roomCameraIcon, #roomMicIcon, #roomChatIcon {
-    height: 20px;
-    width: 20px;
+#roomCameraIcon, .roomMicIcon, #roomChatIcon, #roomSettingIcon, #shareScreenIcon {
+    height: 15px;
+    width: 15px;
+}
+
+#micBtn {
+    position: absolute;
+    right: 1%;
+    top: 1%;
+    z-index: 1000;
 }
 
 .record-border {
@@ -43,40 +59,57 @@
 $chatAreaWidth : 0px;
 $chatAreaWidth0px: 0px;
 $chatAreaWidth300px: 300px;
-$roomAreaHeight: 560px;
+$roomAreaHeight: 640px;
 
 #roomArea {
     height: $roomAreaHeight;
-    gap: 1rem;
     display: grid;
     grid-template-columns: 1fr auto;
-    grid-template-areas:"video chat";
     overflow: hidden;
+    position: relative;
+    margin-top: 15px;
 
     .videoAreaWidth {
-        width: 75%;
+        width: 80%;
     }
 
     #videoArea {
         $width: 70rem;
         $height: 30rem;
 
-        // grid-area: video;
-        // display: grid;
         transition: all 1s;
         // background-color: black;
+        position: relative;
         width: 100%;
         // object-fit: cover;
         // grid-template-columns: repeat(1, $width / 1);
     
         .localVideo {
-            height: $roomAreaHeight;
+            height: $roomAreaHeight - 3px;
             object-fit: cover;
+            border-radius: 5px;
+            width: 100%;
+            position: absolute;
         }
 
-        .localVideoWidth {
-            width: 100%;
-        } 
+        .resizeLocalVideoWidth {
+            width: 20% !important;
+            height: 30% !important;
+            right: 0;
+            // transition: all 1s;
+        }
+
+        .shareVideoExpand {
+            width: 79% !important;
+            height: 100%;
+            position: absolute;
+            border: 1px red soli
+        }
+
+
+        .micBtnExpand {
+            right: -0.3% !important;
+        }
     }
 
     #chatArea {
@@ -88,8 +121,9 @@ $roomAreaHeight: 560px;
         width: 340px;
         transform: translate(150%); /* 用此屬性控制縮放 */
         transition: 1s;
-        position: fixed;
+        position: absolute;
         right: 0;
+        z-index: 1000;
     }
 
 }
@@ -106,7 +140,7 @@ $roomAreaHeight: 560px;
 }        
 
 .showChatArea {
-    transform: translate(-16%) !important;
+    transform: translate(0%) !important;
 }
 
 // #roomChatIcon:checked + label > #chatArea {
@@ -119,7 +153,7 @@ $roomAreaHeight: 560px;
 //     }
 // }
 
-// #roomChatIcon:target + #roomArea #chatArea {
+//  #roomChatIcon:target + #roomArea #chatArea {
 //     @if ($chatAreaWidth == $chatAreaWidth0px) {
 //         width: 300px;
 //         // $chatAreaWidth: 300px;
@@ -172,7 +206,7 @@ $roomAreaHeight: 560px;
 
 #chatTextarea {
     overflow-x: auto;
-    height: $roomAreaHeight;
+    height: $roomAreaHeight - 65px;
 }
 
 .message__wrapper:last-child {

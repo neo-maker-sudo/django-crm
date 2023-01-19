@@ -44,25 +44,38 @@
 
     </aside>
     <div id="videoArea">
-      <video class="localVideo localVideoWidth" autoplay playsinline></video>
-      <div id="remoteVideoArea">
+      {% comment %} <video autoplay id="shareVideo"></video> {% endcomment %}
 
-        {% comment %} <div style="background-color: red; width:100%; height: 100%;"></div> {% endcomment %}
+      <div>
+        <div id="micBtn">
+          <img class="roomMicIcon" src="{% static 'icons/mic.png' %}" />
+        </div>
+        {% comment %} class="w-6/12 text-center" {% endcomment %}
+
+        <video class="localVideo" autoplay playsinline></video>
+      </div>
+
+      <div id="remoteVideoArea">
       </div>
     </div>
   </div>
+
   <div>
     <div class="controls">
       <div id="cameraBtn">
         <img id="roomCameraIcon" src="{% static 'icons/camera.png' %}" />
       </div>
 
-      <div id="micBtn">
-        <img id="roomMicIcon" src="{% static 'icons/mic.png' %}" />
-      </div>
-
       <div id="chatBtn">
         <img id="roomChatIcon" src="{% static 'icons/chat.png' %}">
+      </div>
+
+      <div id="settingBtn">
+        <img id="roomSettingIcon" src="{% static 'icons/setting.png' %}">
+      </div>
+
+      <div id="shareScreenBtn">
+        <img id="shareScreenIcon" src="{% static 'icons/screen.png' %}">
       </div>
 
     </div>

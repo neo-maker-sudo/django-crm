@@ -24,7 +24,7 @@ const videoRecordBtn = document.getElementById("videoRecord");
 const videoReplayBtn = document.getElementById("videoReplay");
 const videoDownloadBtn = document.getElementById("videoDownload");
 
-const shareScreenBtn = document.getElementById("shareScreen");
+const shareScreenBtn = document.getElementById("shareScreenBtn");
 
 const sideBar = document.querySelector(".sidebar");
 const sideBarToggle = document.getElementById("sidebarToggle");
@@ -33,16 +33,20 @@ const sidebarClose = document.getElementById("sidebarClose");
 const chatArea = document.getElementById("chatArea");
 const roomChatIcon = document.getElementById("roomChatIcon");
 
+const videoArea = document.querySelector("#videoArea");
+const remoteVideoArea = document.querySelector("#remoteVideoArea");
+
+const dropdownMenuBtn = document.getElementById("dropdownMenu");
+
+const forbidColor = "#c5221f"
+const allowColor = "#363739"
+
 roomChatIcon.onclick = () => {
     if ( !chatArea.classList.contains("showChatArea")) {
         chatArea.classList.add("showChatArea");
-        // localVideo.classList.remove("localVideoWidth");
         videoArea.style.width = "75%";
-        // videoArea.classList.add("videoAreaWidth");
     } else {
         chatArea.classList.remove("showChatArea");
-        // localVideo.classList.add("localVideoWidth");
-        // videoArea.classList.remove("videoAreaWidth");
         videoArea.style.width = "100%";
     }
 }
@@ -103,25 +107,40 @@ function retrieveDevices(devicesInfo) {
 
 function handleLocalMediaStreamError(error) {
     if ( error ) {
-        alert("請操作瀏覽器授權存取你的攝影機，並重新整理")
-    }
+        const mediaSource = new MediaSource();
 
-    console.error("getUserMedia error:", error)
+        micBtn.style.backgroundColor = forbidColor
+        cameraBtn.style.backgroundColor = forbidColor
+
+        try {
+            // localVideo.srcObject = mediaSource;
+            localVideo.style.backgroundColor = "black";
+        } catch (error) {
+            localVideo.src = window.URL.createObjectURL(mediaSource);
+        }        
+    }
 }
 
 // ========  取得視訊媒體流
 function retrieveLocalMediaStream(mediaStream) {
-    window.stream = mediaStream
-
-    if ("srcObject" in localVideo) {
-        localVideo.srcObject = mediaStream;
-    } else {
-        localVideo.src = window.URL.createObjectURL(mediaStream);
-    }
+    localVideo.srcObject = window.stream = mediaStream;
 
     return navigator.mediaDevices.enumerateDevices()
 }
 // ========
+
+function controlActiveStatus() {
+    window.stream.oninactive = () => {
+        micBtn.style.backgroundColor = forbidColor
+        cameraBtn.style.backgroundColor = forbidColor
+    }
+
+    window.stream.onactive = () => {
+        micBtn.style.backgroundColor = allowColor
+        cameraBtn.style.backgroundColor = allowColor
+    }
+
+}
 
 // ========  開啟視訊
 async function captureLocalVideoStream() {
@@ -135,6 +154,7 @@ async function captureLocalVideoStream() {
             "deviceId": videoSource ? { exact: videoSource } : undefined
         },
         // 音訊輸入
+        // "audio": false
         "audio": {
             "deviceId": audioSource ? { exact: audioSource } : undefined
         },
@@ -144,62 +164,102 @@ async function captureLocalVideoStream() {
     await navigator.mediaDevices.getUserMedia(mediaStreamConstraints)
     .then(retrieveLocalMediaStream)
     .then(retrieveDevices)
+    .then(controlActiveStatus)
     .catch(handleLocalMediaStreamError)
 }
 cameraBtn.onclick = () => {
+    // chaining operator
+    if ( window.stream == undefined || !window.stream?.active ) {
+        alert("瀏覽器無權限存取你的鏡頭，請開啟權限後重新整理頁面");
+        return
+    }
+
     let videoTrack = window.stream.getTracks().find(track => track.kind === 'video')
 
-    if(videoTrack.enabled){
+    if (videoTrack.enabled) {
         videoTrack.enabled = false
-        cameraBtn.style.backgroundColor = 'rgb(255, 80, 80)'
-    }else{
+        cameraBtn.style.backgroundColor = forbidColor
+    } else {
         videoTrack.enabled = true
-        cameraBtn.style.backgroundColor = '#363739'
+        cameraBtn.style.backgroundColor = allowColor
     }
 
 }
 // ========
 
 micBtn.onclick = () => {
+    // chaining operator
+    if ( window.stream == undefined || !window.stream?.active ) {
+        alert("瀏覽器無權限存取你的麥克風，請開啟權限後重新整理頁面");
+        return
+    }
+
     let audioTrack = window.stream.getTracks().find(track => track.kind === 'audio')
 
     if(audioTrack.enabled){
         audioTrack.enabled = false
-        micBtn.style.backgroundColor = 'rgb(255, 80, 80)'
+        micBtn.style.backgroundColor = forbidColor
     }else{
         audioTrack.enabled = true
-        micBtn.style.backgroundColor = '#363739'
+        micBtn.style.backgroundColor = allowColor
     }
 }
 
 
 // // ========  取得分享畫面媒體流
-// function retrieveShareMediaStream(mediaStream) {
-//     const shareStream = mediaStream;
+function createRemoteShareScreen(session_id) {
+    const shareVideo = document.createElement("video");
 
-//     if ("srcObject" in shareVideo) {
-//         shareVideo.srcObject = shareStream;
-//     } else {
-//         shareVideo.src = window.URL.createObjectURL(mediaStream);
-//     }
+    shareVideo.autoplay = true;
+    shareVideo.setAttribute('playsinline', true);
+    shareVideo.id = `${session_id}-shareVideo`;
+    localVideo.classList.add("resizeLocalVideoWidth");
+    shareVideo.classList.add("shareVideoExpand"); 
+    shareVideo.srcObject = window.shareStream = mediaStream;
+}
 
-//     window.shareStream = shareStream;
-// }
+async function retrieveShareMediaStream(mediaStream) {
+    if ( window.totalHumans > 1) {
+        socket.send(JSON.stringify({
+            "type": "share_screen",
+            "username": dropdownMenuBtn.dataset.username,
+            "session_id": localVideo.id
+        }))
+    }
+
+    const shareVideo = document.createElement("video");
+
+    shareVideo.autoplay = true;
+    shareVideo.setAttribute('playsinline', true);
+    shareVideo.id = `${localVideo.id}-shareVideo`;
+    localVideo.classList.add("resizeLocalVideoWidth");
+    shareVideo.classList.add("shareVideoExpand"); 
+    shareVideo.srcObject = window.shareStream = mediaStream;
+
+    videoArea.append(shareVideo);  
+
+    window.shareStream.getVideoTracks()[0].onended = function () {
+        videoArea.removeChild(shareVideo);
+        shareVideo.classList.remove("shareVideoExpand");
+        localVideo.classList.remove("resizeLocalVideoWidth");
+    };
+
+}
 // // ========
 
 // // ========  分享畫面
-// async function shareLocalVideoStream() {
-//     const shareConstraints = {
-//         frameRate: 15,
-//         width: 640,
-//     }
+async function shareLocalVideoStream() {
+    const shareConstraints = {
+        frameRate: 15,
+        width: 640,
+    }
 
-//     // ask client user whether grant video/audio streaming authorization or not.
-//     navigator.mediaDevices.getDisplayMedia(shareConstraints)
-//     .then(retrieveShareMediaStream)
-//     .catch(handleLocalMediaStreamError)
-// }
-// shareScreenBtn.onclick = shareLocalVideoStream
+    // ask client user whether grant video/audio streaming authorization or not.
+    await navigator.mediaDevices.getDisplayMedia(shareConstraints)
+    .then(retrieveShareMediaStream)
+
+}
+shareScreenBtn.onclick = shareLocalVideoStream
 // // ========  
 
 // // ========  切換輸出裝置

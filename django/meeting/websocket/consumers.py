@@ -58,13 +58,23 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 }
             )
 
+        elif type == "share_screen":
+            await self.channel_layer.group_send(
+                self.room_group_name, {
+                    "type": "share_screen_message",
+                    "totals": len(peers),
+                    "sessions": list(peers.keys()),
+                    "session_id": text_data_json.get("session_id"),
+                    "username": text_data_json.get("username")
+                }
+            )
+
         elif type == "join":
             await self.channel_layer.group_send(
                 self.room_group_name, {
                     "type": "join_message", 
                     "totals": len(peers),
                     "sessions": list(peers.keys()),
-                    "username": self.scope['user'].username
                 }
             )
 
@@ -99,13 +109,22 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 "session_id": self.scope['cookies']['sessionid']
             }))
 
+    async def share_screen_message(self, event):
+        await self.send(text_data=json.dumps({
+            "type": "share_screen",
+            "session_id": event['session_id'],
+            "totals": event['totals'],
+            "sessions": event['sessions'],
+            "username": event['username'],
+        }))
+
     async def join_message(self, event):
         await self.send(text_data=json.dumps({
             "type": "join",
             "session_id": self.scope['cookies']['sessionid'],
             "totals": event['totals'],
             "sessions": event['sessions'],
-            "username": event['username'],
+            "username": self.scope['user'].username,
         }))
 
     async def disconnect_message(self, event):
